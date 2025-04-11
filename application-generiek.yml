@@ -1,0 +1,116 @@
+---
+logging:
+  level:
+    root: INFO
+    generiek: DEBUG
+    org:
+      springframework:
+        web:
+          client:
+            RestTemplate: DEBUG
+
+server:
+  port: 8092
+  error:
+    path: "/error"
+    include-message: always
+  servlet:
+    session:
+      tracking-modes: cookie
+      cookie:
+        secure: true
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+        # dialect: org.hibernate.dialect.PostgreSQL10Dialect
+        dialect: org.hibernate.dialect.H2Dialect
+    open-in-view: false
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:./database/student-mobility
+    # driver-class-name: org.postgresql.Driver
+    # url: jdbc:postgresql://localhost:5432/mobility
+    # username: mobility_rw
+    # password: secret
+  flyway:
+    locations: classpath:db/{vendor}/migration
+
+config:
+  connection_timeout_millis: 20_000
+  connection_pool_keep_alive_duration_millis: 300_000
+  # Set to 0 to disable connection-pooling. If responses are slow,
+  # connection-pooling does not matter anyway
+  connection_pool_max_idle_connections: 256
+
+features:
+  # Do we allow to mock the different scenario's - only allow on test
+  allow_playground: true
+  require_eduid: false
+
+# URL of the broker-gui to redirect back after authentication and the
+# credentials of the broker-server to check against
+broker:
+  url: "http://brokerclient:8094/"
+  user: user
+  password: secret
+  service_registry_base_url: "http://brokerclient:8094/"
+
+# Credentials for incoming calls from the SIS, eg when the SIS is POST'ing
+# the association or sending back results
+sis:
+  user: sis-to-generiek
+  password: secret
+
+## Local php mock SIS backend
+backend:
+  url: "http://mock-backend:8002/"
+  api_user: generiek-to-sis
+  api_password: secret
+
+oidc:
+  client-id: generiek-client
+  client-secret: secret
+  redirect-uri: http://intekenontvanger-generiek:8092/redirect_uri
+  authorization-uri: http://mock-oidc/OIDC/authorization
+  token-uri: http://mock-oidc/OIDC/token
+  jwk-set-uri: http://mock-oidc/OIDC/jwks
+  jwk:
+    # The HTTP connect timeout for JWK set retrieval, in millisecond
+    connect-timeout: 1500
+    # The HTTP read timeout for JWK set retrieval, in milliseconds
+    read-timeout: 1500
+    # The HTTP entity size limit for JWK set retrieval, in bytes
+    size-limit: 153_600
+    # authorization-uri: http://localhost:8080/oidc/authorize
+    # token-uri: http://localhost:8080/oidc/token
+    # jwk-set-uri: http://localhost:8080/oidc/certs
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include:
+          - health
+          - info
+      base-path: "/internal"
+  endpoint:
+    health:
+      enabled: true
+      show-details: when_authorized
+    info:
+      enabled: true
+  info:
+    git:
+      mode: full
+    defaults:
+      enabled: true
+
+# used by the git plugin
+info:
+  build:
+    artifact: "@project.artifactId@"
+    version: "@project.version@"

@@ -1,0 +1,78 @@
+# yamllint disable rule:line-length
+---
+services:
+  # The host institution runs the enrollment receiver
+  intekenontvanger-generiek:
+    image: ghcr.io/surfnet/student-mobility-inteken-ontvanger-generiek/intekenontvanger-generiek:latest
+    container_name: "intekenontvanger-generiek"
+    restart: unless-stopped
+    volumes:
+      - ./application-generiek.yml:/application.yml
+      - ./database:/database
+    ports:
+      - 8092:8092
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # The home institution provides OOAPI endpoints
+  home-institution-mock:
+    image: ghcr.io/surfnet/student-mobility-home-institution-mock/home-institution-mock:latest
+    container_name: "home-institution-mock"
+    restart: unless-stopped
+    volumes:
+      - ./application-home-institution-mock.yml:/application.yml
+    ports:
+      - 8076:8076
+
+  # A mock SIS backend implementation that sends an email to the student
+  # An email server (smtp) needs to be running on the docker host
+  # 2DO: Add a mailcatcher container
+  inteken-ontvanger-email:
+    image: ghcr.io/surfnet/student-mobility-intekenontvanger-email/intekenontvanger-email:latest
+    container_name: "inteken-ontvanger-email"
+    restart: unless-stopped
+    volumes:
+      - ./application-inteken-ontvanger-email.yml:/application.yml
+    ports:
+      - 8093:8093
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # The frontend of the broker, used for starting the enrollment
+  brokerclient:
+    image: ghcr.io/surfnet/student-mobility-broker/brokerclienteu:latest
+    container_name: "brokerclient"
+    restart: unless-stopped
+    volumes:
+      - ./brokerclient-app.conf:/etc/apache2/sites-enabled/appconf.conf
+    ports:
+      - 8094:80
+
+  # The backend of the broker
+  brokerserver:
+    image: ghcr.io/surfnet/student-mobility-broker/brokerserver:latest
+    container_name: "brokerserver"
+    restart: unless-stopped
+    volumes:
+      - ./application-brokerserver.yml:/application.yml
+      - ./service-registry.yml:/service-registry.yml
+    ports:
+      - 8091:8091
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Another mock backend, that logs the input and sends an association to the home institution
+  mock-backend:
+    container_name: mock-backend
+    restart: unless-stopped
+    build:
+      context: ./mock-backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./mock-backend/src:/var/www/html/
+    ports:
+      - 8002:80

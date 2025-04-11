@@ -1,0 +1,61 @@
+---
+logging:
+  level:
+    root: INFO
+    mail: DEBUG
+    org.springframework.security: INFO
+
+server:
+  port: 8093
+  error:
+    path: "/error"
+    include-message: always
+
+delay:
+  enabled: true
+  millis-email: 500
+
+spring:
+  main:
+    banner-mode: "off"
+  mail:
+    host: host.docker.internal
+    port: 25
+
+# Generic inteken credentials to check against
+intake:
+  user: generiek-to-sis
+  password: secret
+
+email:
+  from: no-reply@inteken-ontvanger-email
+
+# used by the git plugin
+info:
+  build:
+    artifact: "@project.artifactId@"
+    version: "@project.version@"
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include:
+          - health
+          - info
+      base-path: "/internal"
+  endpoint:
+    health:
+      enabled: true
+      show-details: when_authorized
+    info:
+      enabled: true
+  health:
+    mail:
+      enabled: false
+  info:
+    git:
+      mode: full
+    defaults:
+      enabled: true

@@ -1,0 +1,103 @@
+---
+logging:
+  level:
+    root: INFO
+    broker: DEBUG
+    org.springframework: INFO
+    org.springframework.security: INFO
+
+server:
+  port: 8091
+  error:
+    path: "/error"
+    include-message: always
+  servlet:
+    session:
+      cookie:
+        secure: false
+      timeout: 3d
+
+spring:
+  main:
+    banner-mode: "off"
+  jackson:
+    default-property-inclusion: non_null
+  session:
+    jdbc:
+      initialize-schema: always
+    store-type: jdbc
+
+# If enabled there must be a database according to the datasource
+# properties below
+database-session-enabled: false
+
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost/student_mobility
+#    username: student_mobility
+#    password: secret
+
+config:
+  # Endpoint called by catalog. For testing purposes the client can
+  # call it as well
+  start_broker_endpoint: http://localhost:8094/api/broker
+  # Set to False in every non-local environment
+  local: false
+  # Do we allow to mock the different scenario's - only allow on test
+  allow_playground: true
+  # Default home institution if playground is enabled
+  play_home_institution_schacHome: "demoinst02.tld"
+  # Default guest institution if playground is enabled
+  play_guest_institution_schacHome: "demoinst01.tld"
+  # Default offeringId if playground is enabled
+  play_offering_id: "6259518E-EF2A-4203-83C2-757E4FEACEDD"
+  # The basic authn to mimic the SIS that reports back results
+  # only configure with values on test
+  sis_user: sis
+  sis_password: secret
+  sis_results_endpoint: http://intekenontvanger-generiek/api/play-results
+  broker_client_url: http://brokerclient:8094/
+  catalog_url: http://catalog.local/
+  connection_timeout_millis: 20_000
+  oauth2:
+    token_endpoint: http://mock-oidc/OIDC/token
+    client_id: broker-clientr
+    secret: secret
+  edu_hub:
+    gateway_url: http://localhost:8081
+    user: eduhub
+    password: secret
+  queueit:
+    url: "https://queue-it.local"
+    customer_id: "local"
+    redirect_uri: "http://brokerclient:8094/api/queue/redirect"
+
+service_registry:
+  path: file:///service-registry.yml
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include:
+          - health
+          - info
+      base-path: "/internal"
+  endpoint:
+    health:
+      enabled: true
+      show-details: when_authorized
+    info:
+      enabled: true
+  info:
+    git:
+      mode: full
+    defaults:
+      enabled: true
+
+# used by the git plugin
+info:
+  build:
+    artifact: "@project.artifactId@"
+    version: "@project.version@"

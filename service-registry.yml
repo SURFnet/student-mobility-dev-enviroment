@@ -1,0 +1,39 @@
+---
+- schacHome: demoinst01.tld
+  name: Demo 01 host
+  abbreviation: Demo01host
+  courseEndpoint: "http://home-institution-mock:8076/none/offerings"
+  courseAuthentication: BASIC
+  courseAuthenticationUserName: "user"
+  courseAuthenticationPassword: "secret"
+  personsEndpoint: "http://home-institution-mock:8076/persons/me"
+  personAuthentication: HEADER
+  associationsEndpoint: "http://home-institution-mock:8076/associations"
+  authenticationEndpoint: "http://intekenontvanger-generiek:8092/api/enrollment"
+  registrationEndpoint: "http://intekenontvanger-generiek:8092/api/start"
+  registrationUser: "user"
+  registrationPassword: "secret"
+  logoURI: https://static.surfconext.nl/logos/idp/surf.png
+  scopes: demoinst01.tld/persons demoinst01.tld/results
+  privacyEndpoint: http://calatog.local/studentmobiliteit
+  useEduHubForOffering: false
+  useQueueIt: false
+- schacHome: demoinst02.tld
+  name: Demo 02 home
+  abbreviation: Demo02home
+  courseEndpoint: "http://home-institution-mock:8076/none/offerings"
+  courseAuthentication: BASIC
+  courseAuthenticationUserName: "user"
+  courseAuthenticationPassword: "secret"
+  personsEndpoint: "http://home-institution-mock:8076/persons/me"
+  personAuthentication: HEADER
+  associationsEndpoint: "http://home-institution-mock:8076/associations"
+  authenticationEndpoint: "http://intekenontvanger-generiek:8092/api/enrollment"
+  registrationEndpoint: "http://intekenontvanger-generiek:8092/api/start"
+  registrationUser: "user"
+  registrationPassword: "secret"
+  logoURI: https://static.surfconext.nl/logos/idp/surf.png
+  scopes: demoinst02.eduxchange.eu/persons demoinst02.eduxchange.eu/results
+  privacyEndpoint: https://www.surf.nl/studentmobiliteit
+  useEduHubForOffering: false
+  useQueueIt: false
